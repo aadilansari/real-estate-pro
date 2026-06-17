@@ -3,6 +3,7 @@ import '../widgets/bottom_nav_bar.dart';
 import '../widgets/property_card.dart';
 import '../widgets/location_card.dart';
 import '../widgets/category_item.dart';
+import 'property_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,18 +43,28 @@ class _HomeScreenState extends State<HomeScreen>
 
   final List<Map<String, String>> _topProperties = [
     {
-      'image':
-          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
-      'title': 'Luxury Villa with Pool',
-      'price': '₹2.5 Cr',
-      'location': 'Sarjapur, Bangalore',
+      'image': 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
+      'title': 'snn raj eternia - Harlur',
+      'price': '60,000',
+      'location': 'Whitefield',
+      'sqft': '1080 sqft',
+      'floor': '9th Floor',
+      'furnishing': 'Fully Furnished',
+      'date': '25/12/2025',
+      'bhk': '3 BHK',
+      'availFrom': '2026-01-15',
     },
     {
-      'image':
-          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
-      'title': 'Modern Apartment',
-      'price': '₹85 L',
-      'location': 'Whitefield, Bangalore',
+      'image': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
+      'title': 'Prestige Lakeside - 2BHK Apartment',
+      'price': '45,000',
+      'location': 'Sarjapur',
+      'sqft': '950 sqft',
+      'floor': '3rd Floor',
+      'furnishing': 'Semi Furnished',
+      'date': '01/03/2026',
+      'bhk': '2 BHK',
+      'availFrom': '2026-03-01',
     },
   ];
 
@@ -376,6 +387,18 @@ class _HomeScreenState extends State<HomeScreen>
             title: _topProperties[i]['title']!,
             price: _topProperties[i]['price']!,
             location: _topProperties[i]['location']!,
+            sqft: _topProperties[i]['sqft']!,
+            floor: _topProperties[i]['floor']!,
+            furnishing: _topProperties[i]['furnishing']!,
+            availableDate: _topProperties[i]['date']!,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PropertyDetailScreen(
+                  property: _topProperties[i],
+                ),
+              ),
+            ),
           ),
         ),
       ],
