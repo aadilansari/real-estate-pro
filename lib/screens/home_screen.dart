@@ -43,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   final List<Map<String, String>> _topProperties = [
     {
-      'image': 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
+      'image':
+          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
       'title': 'snn raj eternia - Harlur',
       'price': '60,000',
       'location': 'Whitefield',
@@ -55,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen>
       'availFrom': '2026-01-15',
     },
     {
-      'image': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
+      'image':
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
       'title': 'Prestige Lakeside - 2BHK Apartment',
       'price': '45,000',
       'location': 'Sarjapur',
@@ -127,25 +129,8 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8A020),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Icon(Icons.home, color: Colors.white, size: 20),
-                  ),
+                  Image.asset('assets/applogo.png', width: 32, height: 32),
                   const SizedBox(width: 6),
-                  const Text(
-                    'REALAURA',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFFE8A020),
-                      letterSpacing: 1,
-                    ),
-                  ),
                 ],
               ),
               Row(
@@ -170,7 +155,10 @@ class _HomeScreenState extends State<HomeScreen>
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 1,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(4),
@@ -236,8 +224,7 @@ class _HomeScreenState extends State<HomeScreen>
                     tabs[i],
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight:
-                          selected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                       color: selected
                           ? const Color(0xFFE8A020)
                           : Colors.black54,
@@ -329,17 +316,11 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               const Text(
                 'Select Location',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
               Text(
                 'View All',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade500,
-                ),
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
               ),
             ],
           ),
@@ -370,10 +351,7 @@ class _HomeScreenState extends State<HomeScreen>
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Top Properties in Sarjapur',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(height: 10),
@@ -394,9 +372,8 @@ class _HomeScreenState extends State<HomeScreen>
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => PropertyDetailScreen(
-                  property: _topProperties[i],
-                ),
+                builder: (_) =>
+                    PropertyDetailScreen(property: _topProperties[i]),
               ),
             ),
           ),

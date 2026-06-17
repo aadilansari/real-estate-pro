@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
 
 void main() => runApp(const RealEstateApp());
@@ -14,7 +15,7 @@ class RealEstateApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE8A020)),
         useMaterial3: true,
-        fontFamily: 'Roboto',
+        textTheme: GoogleFonts.interTextTheme(),
       ),
       home: const HomeScreen(),
     );

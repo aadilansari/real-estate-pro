@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -10,31 +11,19 @@ class BottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
+  static const _items = [
+    {'svg': 'assets/home.svg', 'label': 'Home'},
+    {'svg': 'assets/star.svg', 'label': 'Rating'},
+    {'svg': 'assets/refer.svg', 'label': 'Refer & Earn'},
+    {'svg': 'assets/shortlist.svg', 'label': 'Shortlist'},
+    {'svg': 'assets/profile.svg', 'label': 'Profile'},
+  ];
+
   @override
   Widget build(BuildContext context) {
-    const items = [
-      {'icon': Icons.home_outlined, 'activeIcon': Icons.home, 'label': 'Home'},
-      {'icon': Icons.star_border, 'activeIcon': Icons.star, 'label': 'Rating'},
-      {
-        'icon': Icons.card_giftcard_outlined,
-        'activeIcon': Icons.card_giftcard,
-        'label': 'Refer & Earn',
-      },
-      {
-        'icon': Icons.favorite_border,
-        'activeIcon': Icons.favorite,
-        'label': 'Shortlist',
-      },
-      {
-        'icon': Icons.person_outline,
-        'activeIcon': Icons.person,
-        'label': 'Profile',
-      },
-    ];
-
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF0F0F0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -48,36 +37,35 @@ class BottomNavBar extends StatelessWidget {
           height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(items.length, (i) {
+            children: List.generate(_items.length, (i) {
               final selected = selectedIndex == i;
+              final color = selected ? const Color(0xFFE8A020) : Colors.black;
+              final textColor = selected
+                  ? const Color(0xFFE8A020)
+                  : Color(0xFF717171);
               return GestureDetector(
                 onTap: () => onTap(i),
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
-                  width: 60,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        selected
-                            ? items[i]['activeIcon'] as IconData
-                            : items[i]['icon'] as IconData,
-                        size: 22,
-                        color: selected
-                            ? const Color(0xFFE8A020)
-                            : Colors.grey.shade500,
+                      SvgPicture.asset(
+                        _items[i]['svg']!,
+                        width: 22,
+                        height: 22,
+                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        items[i]['label'] as String,
+                        _items[i]['label']!,
                         style: TextStyle(
-                          fontSize: 10,
-                          color: selected
-                              ? const Color(0xFFE8A020)
-                              : Colors.grey.shade500,
+                          fontSize: 12,
+
+                          color: textColor,
                           fontWeight: selected
                               ? FontWeight.w600
-                              : FontWeight.normal,
+                              : FontWeight.w500,
                         ),
                       ),
                     ],
