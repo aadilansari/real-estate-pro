@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen>
     {
       'image':
           'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
-      'title': 'snn raj eternia - Harlur',
+      'title': 'SNN Raj Eternia - Harlur',
       'price': '60,000',
       'location': 'Whitefield',
       'sqft': '1080 sqft',
@@ -57,7 +57,13 @@ class _HomeScreenState extends State<HomeScreen>
       'furnishing': 'Fully Furnished',
       'date': '25/12/2025',
       'bhk': '3 BHK',
-      'availFrom': '2026-01-15',
+      'availFrom': '25/12/2025',
+      'balcony': '2',
+      'bathroom': '2',
+      'deposit': '4 Lac',
+      'maintenance': '6000',
+      'tenantType': 'Anyone',
+      'brokerage': '5000',
     },
     {
       'image':
@@ -70,7 +76,13 @@ class _HomeScreenState extends State<HomeScreen>
       'furnishing': 'Semi Furnished',
       'date': '01/03/2026',
       'bhk': '2 BHK',
-      'availFrom': '2026-03-01',
+      'availFrom': '01/03/2026',
+      'balcony': '1',
+      'bathroom': '2',
+      'deposit': '2 Lac',
+      'maintenance': '4000',
+      'tenantType': 'Family',
+      'brokerage': '4500',
     },
   ];
 
@@ -384,17 +396,18 @@ class _HomeScreenState extends State<HomeScreen>
       {'icon': Icons.villa_outlined, 'label': 'SOCIETY'},
     ];
 
-    return SizedBox(
-      height: 80,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, i) => CategoryItem(
-          icon: categories[i]['icon'] as IconData,
-          label: categories[i]['label'] as String,
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: categories
+            .map(
+              (c) => CategoryItem(
+                icon: c['icon'] as IconData,
+                label: c['label'] as String,
+              ),
+            )
+            .toList(),
       ),
     );
   }

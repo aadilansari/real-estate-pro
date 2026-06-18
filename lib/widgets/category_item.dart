@@ -16,7 +16,7 @@ class CategoryItem extends StatelessWidget {
           height: 52,
           decoration: BoxDecoration(
             color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(6),
             border: Border.all(color: Colors.grey.shade200),
           ),
           child: Icon(icon, size: 24, color: Colors.black87),
@@ -24,7 +24,11 @@ class CategoryItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           label,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
         ),
       ],
     );
