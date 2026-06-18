@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/property_card.dart';
 import '../widgets/location_card.dart';
@@ -17,6 +18,9 @@ class _HomeScreenState extends State<HomeScreen>
   int _selectedTab = 0; // 0=Rent, 1=Sell, 2=Upcoming
   int _selectedNav = 0;
   late TabController _tabController;
+  final _hintController = PageController();
+  int _hintIndex = 0;
+  static const _hints = ['Search by project', 'Search by location'];
 
   final List<Map<String, String>> _locations = [
     {
@@ -74,11 +78,13 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    Future.delayed(const Duration(seconds: 2), _cycleHint);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _hintController.dispose();
     super.dispose();
   }
 
@@ -87,25 +93,42 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTabs(),
-                    _buildSearchBar(),
-                    const SizedBox(height: 16),
-                    _buildCategories(),
-                    const SizedBox(height: 16),
-                    _buildSelectLocation(),
-                    const SizedBox(height: 16),
-                    _buildTopProperties(),
-                    const SizedBox(height: 16),
-                  ],
+        child: CustomScrollView(
+          slivers: [
+            // AppBar — hides on scroll, tabs+search stick to top
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              floating: true,
+              snap: true,
+              pinned: false,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 72,
+              title: _buildAppBar(),
+              titleSpacing: 0,
+              bottom: _StickyTabsBar(
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [_buildTabs(), _buildSearchBar()],
+                  ),
                 ),
+              ),
+            ),
+            // Scrollable content
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  _buildCategories(),
+                  const SizedBox(height: 16),
+                  _buildSelectLocation(),
+                  const SizedBox(height: 16),
+                  _buildTopProperties(),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ],
@@ -122,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Logo + location
           Column(
@@ -129,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               Row(
                 children: [
-                  Image.asset('assets/applogo.png', width: 32, height: 32),
+                  Image.asset('assets/applogo.png', width: 40, height: 40),
                   const SizedBox(width: 6),
                 ],
               ),
@@ -137,63 +161,88 @@ class _HomeScreenState extends State<HomeScreen>
                 children: [
                   const Text(
                     'Bengaluru',
-                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                    style: TextStyle(fontSize: 8, color: Colors.black),
                   ),
-                  const Icon(Icons.keyboard_arrow_down, size: 16),
+                  const Icon(Icons.keyboard_arrow_down, size: 8),
                 ],
               ),
             ],
           ),
           const Spacer(),
-          // Post Property button
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8A020),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Container(
+
+          //  Post Property button
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFFB87514),
+                      Color(0xFFE8A020),
+                      Color(0xFFF5C842),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Post Property',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 8,
+                top: -7,
+                child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
+                    horizontal: 8,
                     vertical: 1,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(2),
+                    border: Border.all(
+                      color: const Color(0xFFE8A020),
+                      width: 0.5,
+                    ),
                   ),
                   child: const Text(
                     'Free',
                     style: TextStyle(
                       fontSize: 8,
                       color: Color(0xFFE8A020),
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                 ),
-                const SizedBox(width: 6),
-                const Text(
-                  'Post Property',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(width: 10),
           Stack(
             children: [
-              const Icon(Icons.notifications_outlined, size: 26),
+              const Icon(Icons.notifications_outlined, size: 35),
               Positioned(
                 right: 0,
                 top: 0,
                 child: Container(
-                  width: 8,
-                  height: 8,
+                  width: 6,
+                  height: 6,
                   decoration: const BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
@@ -220,23 +269,34 @@ class _HomeScreenState extends State<HomeScreen>
               padding: const EdgeInsets.only(right: 20),
               child: Column(
                 children: [
-                  Text(
-                    tabs[i],
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                      color: selected
-                          ? const Color(0xFFE8A020)
-                          : Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  if (selected)
-                    Container(
-                      height: 2,
-                      width: 30,
-                      color: const Color(0xFFE8A020),
-                    ),
+                  selected
+                      ? ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              Color(0xFFB87514),
+                              Color(0xFFE8A020),
+                              Color(0xFFF5C842),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            tabs[i],
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          tabs[i],
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -246,6 +306,17 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  void _cycleHint() {
+    if (!mounted) return;
+    _hintIndex = (_hintIndex + 1) % _hints.length;
+    _hintController.animateToPage(
+      _hintIndex,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+    Future.delayed(const Duration(seconds: 2), _cycleHint);
+  }
+
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -253,25 +324,47 @@ class _HomeScreenState extends State<HomeScreen>
         decoration: BoxDecoration(
           color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey.shade200),
         ),
         child: Row(
           children: [
             const SizedBox(width: 12),
-            Icon(Icons.search, color: Colors.grey.shade500),
+            SvgPicture.asset(
+              'assets/search.svg',
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(
+                Colors.grey.shade500,
+                BlendMode.srcIn,
+              ),
+            ),
             const SizedBox(width: 8),
             Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search by project',
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 14,
+              child: Stack(
+                children: [
+                  SizedBox(
+                    height: 44,
+                    child: PageView.builder(
+                      controller: _hintController,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _hints.length,
+                      itemBuilder: (_, i) => Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _hints[i],
+                          style: TextStyle(color: Colors.black87, fontSize: 10),
+                        ),
+                      ),
+                    ),
                   ),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ],
               ),
             ),
             Icon(Icons.tune, color: Colors.grey.shade600, size: 20),
@@ -381,4 +474,15 @@ class _HomeScreenState extends State<HomeScreen>
       ],
     );
   }
+}
+
+class _StickyTabsBar extends StatelessWidget implements PreferredSizeWidget {
+  final Widget child;
+  const _StickyTabsBar({required this.child});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(100);
+
+  @override
+  Widget build(BuildContext context) => child;
 }

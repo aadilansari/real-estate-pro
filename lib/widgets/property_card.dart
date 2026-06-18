@@ -63,16 +63,16 @@ class _PropertyCardState extends State<PropertyCard> {
                     CachedNetworkImage(
                       imageUrl: widget.imageUrl,
                       width: double.infinity,
-                      height: 200,
+                      height: 260,
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
                         width: double.infinity,
-                        height: 200,
+                        height: 260,
                         color: Colors.grey.shade200,
                       ),
                       errorWidget: (_, __, ___) => Container(
                         width: double.infinity,
-                        height: 200,
+                        height: 260,
                         color: Colors.grey.shade300,
                         child: const Icon(Icons.image_not_supported, size: 40),
                       ),
@@ -141,7 +141,7 @@ class _PropertyCardState extends State<PropertyCard> {
                     // Share + Phone + WhatsApp stacked on right
                     Positioned(
                       right: 10,
-                      bottom: 40,
+                      top: 60,
                       child: Column(
                         children: [
                           _actionButton(
@@ -177,47 +177,59 @@ class _PropertyCardState extends State<PropertyCard> {
               // ── Schedule a Visit banner ──
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 9),
-                color: const Color(0xFFFFF8EC),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFB87514),
+                      Color(0xFFE8A020),
+                      Color(0xFFF5C842),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
                 child: const Center(
                   child: Text(
                     'Schedule a Visit',
                     style: TextStyle(
-                      color: Color(0xFFE8A020),
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                      fontSize: 14,
                     ),
                   ),
                 ),
               ),
 
               // ── Price row ──
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+              Container(
+                color: const Color(0xFF29B6C8),
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '₹ ${widget.price}/M',
                       style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
                       ),
                     ),
                     Row(
                       children: [
                         const Icon(
                           Icons.calendar_today_outlined,
-                          size: 14,
-                          color: Colors.black45,
+                          size: 16,
+                          color: Colors.white70,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 6),
                         Text(
                           widget.availableDate,
                           style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -226,11 +238,9 @@ class _PropertyCardState extends State<PropertyCard> {
                 ),
               ),
 
-              // ── Divider ──
-              Divider(height: 1, color: Colors.grey.shade200),
-
               // ── Details row ──
-              Padding(
+              Container(
+                color: const Color(0xFFE8F8FA),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 10,
@@ -238,7 +248,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _detailChip(Icons.straighten, widget.sqft),
+                    _detailChip(Icons.crop_square_outlined, widget.sqft),
                     _detailChip(Icons.layers_outlined, widget.floor),
                     _detailChip(Icons.weekend_outlined, widget.furnishing),
                   ],
@@ -268,11 +278,15 @@ class _PropertyCardState extends State<PropertyCard> {
   Widget _detailChip(IconData icon, String label) {
     return Row(
       children: [
-        Icon(icon, size: 15, color: Colors.black45),
-        const SizedBox(width: 4),
+        Icon(icon, size: 18, color: Colors.black54),
+        const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.black54),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
         ),
       ],
     );
