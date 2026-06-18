@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen>
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // AppBar — hides on scroll, tabs+search stick to top
+            // AppBar — floats, hides on scroll
             SliverAppBar(
               backgroundColor: Colors.white,
               floating: true,
@@ -115,8 +115,20 @@ class _HomeScreenState extends State<HomeScreen>
               pinned: false,
               elevation: 0,
               automaticallyImplyLeading: false,
-              toolbarHeight: 72,
+
               title: _buildAppBar(),
+              titleSpacing: 0,
+            ),
+            // Tabs + Search — always pinned to top
+            SliverAppBar(
+              backgroundColor: Colors.white,
+              pinned: true,
+              floating: false,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 0,
+              expandedHeight: 0,
+              collapsedHeight: 0,
               titleSpacing: 0,
               bottom: _StickyTabsBar(
                 child: Container(
@@ -156,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildAppBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -165,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               Row(
                 children: [
-                  Image.asset('assets/applogo.png', width: 40, height: 40),
+                  Image.asset('assets/applogo.png', width: 46, height: 46),
                   const SizedBox(width: 6),
                 ],
               ),
@@ -173,9 +186,9 @@ class _HomeScreenState extends State<HomeScreen>
                 children: [
                   const Text(
                     'Bengaluru',
-                    style: TextStyle(fontSize: 8, color: Colors.black),
+                    style: TextStyle(fontSize: 10, color: Colors.black),
                   ),
-                  const Icon(Icons.keyboard_arrow_down, size: 8),
+                  const Icon(Icons.keyboard_arrow_down, size: 10),
                 ],
               ),
             ],
@@ -271,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildTabs() {
     final tabs = ['Rent', 'Sell', 'Upcoming Projects'];
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       child: Row(
         children: List.generate(tabs.length, (i) {
           final selected = _selectedTab == i;

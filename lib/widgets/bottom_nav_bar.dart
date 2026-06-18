@@ -39,10 +39,12 @@ class BottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_items.length, (i) {
               final selected = selectedIndex == i;
-              final color = selected ? const Color(0xFFE8A020) : Colors.black;
+              final iconColor = selected
+                  ? Colors.black
+                  : const Color(0xFF717171);
               final textColor = selected
-                  ? const Color(0xFFE8A020)
-                  : Color(0xFF717171);
+                  ? Colors.black
+                  : const Color(0xFF717171);
               return GestureDetector(
                 onTap: () => onTap(i),
                 behavior: HitTestBehavior.opaque,
@@ -54,7 +56,10 @@ class BottomNavBar extends StatelessWidget {
                         _items[i]['svg']!,
                         width: 22,
                         height: 22,
-                        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                          iconColor,
+                          BlendMode.srcATop,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
