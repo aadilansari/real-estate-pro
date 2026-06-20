@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../data/models/property_model.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
-  final Map<String, String> property;
+  final PropertyModel property;
 
   const PropertyDetailScreen({super.key, required this.property});
 
@@ -13,46 +14,43 @@ class PropertyDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> galleryImages = [
-      property['image']!,
+      property.image,
       'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
       'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400',
       'https://images.unsplash.com/photo-1565182999561-18d7dc61c393?w=400',
     ];
 
     final details = [
-      {'icon': Icons.bed_outlined, 'label': '${property['bhk'] ?? '3 BHK'}'},
+      {'icon': Icons.bed_outlined, 'label': property.bhk},
       {
         'icon': Icons.balcony_outlined,
-        'label': '${property['balcony'] ?? '2'} Balcony',
+        'label': '${property.balcony} Balcony',
       },
       {
         'icon': Icons.bathtub_outlined,
-        'label': '${property['bathroom'] ?? '2'} Bathroom',
+        'label': '${property.bathroom} Bathroom',
       },
       {
         'icon': Icons.currency_rupee,
-        'label': 'Deposit - ₹${property['deposit'] ?? '4 Lac'}',
+        'label': 'Deposit - ₹${property.deposit}',
       },
       {
         'icon': Icons.settings_outlined,
-        'label': 'Maintenance - ${property['maintenance'] ?? '6000'}/m',
+        'label': 'Maintenance - ${property.maintenance}/m',
       },
-      {
-        'icon': Icons.weekend_outlined,
-        'label': property['furnishing'] ?? 'Fully Furnished',
-      },
-      {'icon': Icons.straighten, 'label': property['sqft'] ?? '1080 sqft'},
+      {'icon': Icons.weekend_outlined, 'label': property.furnishing},
+      {'icon': Icons.straighten, 'label': property.sqft},
       {
         'icon': Icons.calendar_today_outlined,
-        'label': 'Avail. From - ${property['availFrom'] ?? '2026-01-15'}',
+        'label': 'Avail. From - ${property.availFrom}',
       },
       {
         'icon': Icons.person_outline,
-        'label': 'Tenant Type - ${property['tenantType'] ?? 'Anyone'}',
+        'label': 'Tenant Type - ${property.tenantType}',
       },
       {
         'icon': Icons.percent,
-        'label': 'Full Month Brokerage - ₹${property['brokerage'] ?? '5000'}',
+        'label': 'Full Month Brokerage - ₹${property.brokerage}',
       },
     ];
 
@@ -116,7 +114,7 @@ class PropertyDetailScreen extends StatelessWidget {
               child: Row(
                 children: [
                   const SizedBox(width: 10),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Search by project, property, or location',
                       style: TextStyle(color: Colors.black87, fontSize: 10),
@@ -139,7 +137,6 @@ class PropertyDetailScreen extends StatelessWidget {
           const SizedBox(width: 10),
           Container(
             padding: const EdgeInsets.all(6),
-
             child: SvgPicture.asset(
               'assets/cart.svg',
               width: 22,
@@ -208,13 +205,13 @@ class PropertyDetailScreen extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: CachedNetworkImage(
-          imageUrl: property['image']!,
+          imageUrl: property.image,
           width: double.infinity,
           height: 220,
           fit: BoxFit.cover,
-          placeholder: (_, __) =>
+          placeholder: (_, _) =>
               Container(height: 220, color: Colors.grey.shade200),
-          errorWidget: (_, __, ___) => Container(
+          errorWidget: (_, _, _) => Container(
             height: 220,
             color: Colors.grey.shade300,
             child: const Icon(Icons.image_not_supported, size: 40),
@@ -240,12 +237,12 @@ class PropertyDetailScreen extends StatelessWidget {
                     width: 64,
                     height: 64,
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(
+                    placeholder: (_, _) => Container(
                       width: 64,
                       height: 64,
                       color: Colors.grey.shade200,
                     ),
-                    errorWidget: (_, __, ___) => Container(
+                    errorWidget: (_, _, _) => Container(
                       width: 64,
                       height: 64,
                       color: Colors.grey.shade300,
@@ -267,7 +264,7 @@ class PropertyDetailScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              property['title'] ?? '',
+              property.title,
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -289,7 +286,6 @@ class PropertyDetailScreen extends StatelessWidget {
   Widget _buildActionButtons() {
     return Column(
       children: [
-        // Schedule a Visit
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -307,14 +303,13 @@ class PropertyDetailScreen extends StatelessWidget {
             ),
           ),
         ),
-        // Rent row
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 14),
           color: const Color(0xFF29B6C8),
           child: Center(
             child: Text(
-              'Rent - ₹${property['price'] ?? '60,000'}/m',
+              'Rent - ₹${property.price}/m',
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -323,7 +318,6 @@ class PropertyDetailScreen extends StatelessWidget {
             ),
           ),
         ),
-        // Book Now
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(

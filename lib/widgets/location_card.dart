@@ -18,12 +18,12 @@ class LocationCard extends StatelessWidget {
             width: 76,
             height: 76,
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(
+            placeholder: (_, _) => Container(
               width: 76,
               height: 76,
               color: Colors.grey.shade200,
             ),
-            errorWidget: (_, __, ___) => Container(
+            errorWidget: (_, _, _) => Container(
               width: 76,
               height: 76,
               color: Colors.grey.shade200,

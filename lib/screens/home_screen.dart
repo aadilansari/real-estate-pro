@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../bloc/location/location_bloc.dart';
+import '../bloc/location/location_event.dart';
+import '../bloc/location/location_state.dart';
+import '../bloc/property/property_bloc.dart';
+import '../bloc/property/property_event.dart';
+import '../bloc/property/property_state.dart';
+import '../data/models/property_model.dart';
 import '../widgets/bottom_nav_bar.dart';
-import '../widgets/property_card.dart';
-import '../widgets/location_card.dart';
 import '../widgets/category_item.dart';
+import '../widgets/location_card.dart';
+import '../widgets/property_card.dart';
 import 'property_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,76 +29,17 @@ class _HomeScreenState extends State<HomeScreen>
   final _hintController = PageController();
   int _hintIndex = 0;
   static const _hints = ['Search by project', 'Search by location'];
-
-  final List<Map<String, String>> _locations = [
-    {
-      'name': 'Delhi',
-      'image':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Lotus_temple_compress.jpg/320px-Lotus_temple_compress.jpg',
-    },
-    {
-      'name': 'Agra',
-      'image':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/320px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg',
-    },
-    {
-      'name': 'Mumbai',
-      'image':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Mumbai_03-2016_30_Gateway_of_India.jpg/320px-Mumbai_03-2016_30_Gateway_of_India.jpg',
-    },
-    {
-      'name': 'Delhi',
-      'image':
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/India_Gate_in_New_Delhi_03-2016.jpg/320px-India_Gate_in_New_Delhi_03-2016.jpg',
-    },
-  ];
-
-  final List<Map<String, String>> _topProperties = [
-    {
-      'image':
-          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
-      'title': 'SNN Raj Eternia - Harlur',
-      'price': '60,000',
-      'location': 'Whitefield',
-      'sqft': '1080 sqft',
-      'floor': '9th Floor',
-      'furnishing': 'Fully Furnished',
-      'date': '25/12/2025',
-      'bhk': '3 BHK',
-      'availFrom': '25/12/2025',
-      'balcony': '2',
-      'bathroom': '2',
-      'deposit': '4 Lac',
-      'maintenance': '6000',
-      'tenantType': 'Anyone',
-      'brokerage': '5000',
-    },
-    {
-      'image':
-          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
-      'title': 'Prestige Lakeside - 2BHK Apartment',
-      'price': '45,000',
-      'location': 'Sarjapur',
-      'sqft': '950 sqft',
-      'floor': '3rd Floor',
-      'furnishing': 'Semi Furnished',
-      'date': '01/03/2026',
-      'bhk': '2 BHK',
-      'availFrom': '01/03/2026',
-      'balcony': '1',
-      'bathroom': '2',
-      'deposit': '2 Lac',
-      'maintenance': '4000',
-      'tenantType': 'Family',
-      'brokerage': '4500',
-    },
-  ];
+  static const _tabTypes = ['Rent', 'Sell', 'Upcoming'];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     Future.delayed(const Duration(seconds: 2), _cycleHint);
+
+    // Dispatch initial loads
+    context.read<PropertyBloc>().add(const LoadProperties(type: 'Rent'));
+    context.read<LocationBloc>().add(const LoadLocations());
   }
 
   @override
@@ -98,6 +47,13 @@ class _HomeScreenState extends State<HomeScreen>
     _tabController.dispose();
     _hintController.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged(int index) {
+    setState(() => _selectedTab = index);
+    context
+        .read<PropertyBloc>()
+        .add(LoadProperties(type: _tabTypes[index]));
   }
 
   @override
@@ -115,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen>
               pinned: false,
               elevation: 0,
               automaticallyImplyLeading: false,
-
               title: _buildAppBar(),
               titleSpacing: 0,
             ),
@@ -168,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildAppBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -195,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           const Spacer(),
 
-          //  Post Property button
+          // Post Property button
           Stack(
             clipBehavior: Clip.none,
             children: [
@@ -216,10 +170,10 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const SizedBox(width: 6),
-                    const Text(
+                    SizedBox(width: 6),
+                    Text(
                       'Post Property',
                       style: TextStyle(
                         color: Colors.white,
@@ -289,22 +243,23 @@ class _HomeScreenState extends State<HomeScreen>
         children: List.generate(tabs.length, (i) {
           final selected = _selectedTab == i;
           return GestureDetector(
-            onTap: () => setState(() => _selectedTab = i),
+            onTap: () => _onTabChanged(i),
             child: Padding(
               padding: const EdgeInsets.only(right: 20),
               child: Column(
                 children: [
                   selected
                       ? ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [
-                              Color(0xFFB87514),
-                              Color(0xFFE8A020),
-                              Color(0xFFF5C842),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
+                          shaderCallback: (bounds) =>
+                              const LinearGradient(
+                                colors: [
+                                  Color(0xFFB87514),
+                                  Color(0xFFE8A020),
+                                  Color(0xFFF5C842),
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ).createShader(bounds),
                           child: Text(
                             tabs[i],
                             style: const TextStyle(
@@ -377,7 +332,10 @@ class _HomeScreenState extends State<HomeScreen>
                         alignment: Alignment.centerLeft,
                         child: Text(
                           _hints[i],
-                          style: TextStyle(color: Colors.black87, fontSize: 10),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
                     ),
@@ -426,78 +384,165 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildSelectLocation() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Select Location',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    return BlocBuilder<LocationBloc, LocationState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Select Location',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    'View All',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                'View All',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 110,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: _locations.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, i) => LocationCard(
-              name: _locations[i]['name']!,
-              imageUrl: _locations[i]['image']!,
             ),
-          ),
-        ),
-      ],
+            const SizedBox(height: 10),
+            if (state is LocationLoading)
+              const SizedBox(
+                height: 110,
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (state is LocationLoaded)
+              SizedBox(
+                height: 110,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: state.locations.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 10),
+                  itemBuilder: (context, i) => LocationCard(
+                    name: state.locations[i].name,
+                    imageUrl: state.locations[i].imageUrl,
+                  ),
+                ),
+              )
+            else if (state is LocationError)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  state.message,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildTopProperties() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Top Properties in Sarjapur',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-        ),
-        const SizedBox(height: 10),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _topProperties.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, i) => PropertyCard(
-            imageUrl: _topProperties[i]['image']!,
-            title: _topProperties[i]['title']!,
-            price: _topProperties[i]['price']!,
-            location: _topProperties[i]['location']!,
-            sqft: _topProperties[i]['sqft']!,
-            floor: _topProperties[i]['floor']!,
-            furnishing: _topProperties[i]['furnishing']!,
-            availableDate: _topProperties[i]['date']!,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    PropertyDetailScreen(property: _topProperties[i]),
+    return BlocBuilder<PropertyBloc, PropertyState>(
+      builder: (context, state) {
+        List<PropertyModel> properties = [];
+        bool isLoading = false;
+        String? errorMessage;
+
+        if (state is PropertyLoading) {
+          isLoading = true;
+        } else if (state is PropertyLoaded) {
+          properties = state.properties;
+        } else if (state is PropertyRefreshing) {
+          properties = state.currentProperties;
+        } else if (state is PropertyError) {
+          errorMessage = state.message;
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Top Properties in Sarjapur',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
-          ),
-        ),
-      ],
+            const SizedBox(height: 10),
+            if (isLoading)
+              const SizedBox(
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFE8A020),
+                  ),
+                ),
+              )
+            else if (errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.wifi_off_rounded,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      errorMessage,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 13,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () => context
+                          .read<PropertyBloc>()
+                          .add(LoadProperties(type: _tabTypes[_selectedTab])),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE8A020),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: properties.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
+                itemBuilder: (context, i) {
+                  final p = properties[i];
+                  return PropertyCard(
+                    imageUrl: p.image,
+                    title: p.title,
+                    price: p.price,
+                    location: p.location,
+                    sqft: p.sqft,
+                    floor: p.floor,
+                    furnishing: p.furnishing,
+                    availableDate: p.availFrom,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PropertyDetailScreen(property: p),
+                      ),
+                    ),
+                  );
+                },
+              ),
+          ],
+        );
+      },
     );
   }
 }

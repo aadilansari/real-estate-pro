@@ -59,12 +59,12 @@ class _PropertyCardState extends State<PropertyCard> {
                     width: double.infinity,
                     height: 260,
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(
+                    placeholder: (_, _) => Container(
                       width: double.infinity,
                       height: 260,
                       color: Colors.grey.shade200,
                     ),
-                    errorWidget: (_, __, ___) => Container(
+                    errorWidget: (_, _, _) => Container(
                       width: double.infinity,
                       height: 260,
                       color: Colors.grey.shade300,
